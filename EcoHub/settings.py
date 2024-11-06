@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "EcoHub.products.apps.ProductsConfig",
+    "EcoHub.accounts.apps.AccountsConfig",
+    "EcoHub.orders.apps.OrdersConfig",
+    "EcoHub.reviews.apps.ReviewsConfig",
+    "EcoHub.common.apps.CommonConfig"
 ]
 
 MIDDLEWARE = [
