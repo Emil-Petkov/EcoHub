@@ -8,6 +8,8 @@ urlpatterns = [
     path('orders/', include('EcoHub.orders.urls')),
     path('accounts/', include('EcoHub.accounts.urls')),
     path('reviews/', include('EcoHub.reviews.urls')),
+
+    path('accounts/', include('EcoHub.accounts.urls')),
 ]
 
 handler404 = 'EcoHub.common.views.error_404'

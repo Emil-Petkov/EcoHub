@@ -5,3 +5,6 @@ def shop(request):
 
 def shop_detail(request):
     return render(request, 'shop-detail.html')
+
+def add_product(request):
+    return  render(request, 'products/add-product.html')

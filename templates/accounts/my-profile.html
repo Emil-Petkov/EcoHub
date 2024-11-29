@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base/base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center">My Profile</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <label for="id_profile_picture">Profile Picture</label>
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid my-3">
+                {{ form.profile_picture }}
+            </div>
+            <div class="col-md-8">
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success mt-3">Save Changes</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
