@@ -11,3 +11,4 @@ urlpatterns = [
 ]
 
 handler404 = 'EcoHub.common.views.error_404'
+
