@@ -16,6 +16,7 @@
                         <img src="
                                 
                                 
+                                
                                 {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'img/default-profile.png' %}{% endif %}"
                              alt="Profile Picture"
                              class="img-thumbnail mb-2"
@@ -66,6 +67,11 @@
                         <textarea name="address" class="form-control mb-2" required>{{ user.address }}</textarea>
                         <button type="submit" class="btn btn-success btn-sm">Save</button>
                     </form>
+
+                    <div class="text-end mb-3">
+                        <a href="{% url 'add_product' %}" class="btn btn-warning btn-lg">Add Product</a>
+                    </div>
+
 
                     <!-- Google Maps iframe -->
                     <div id="map-container" class="mt-3" style="height: 300px;">

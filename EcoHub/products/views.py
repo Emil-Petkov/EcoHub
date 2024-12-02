@@ -1,10 +1,26 @@
-from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView
+from .models import Product
+from .forms import ProductForm
 
-def shop(request):
-    return render(request, 'shop.html')
+class ProductCreateView(LoginRequiredMixin, CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'accounts/add_product.html'
+    success_url = reverse_lazy('shop')
 
-def shop_detail(request):
-    return render(request, 'shop-detail.html')
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
-def add_product(request):
-    return  render(request, 'products/add-product.html')
+class ProductListView(ListView):
+    model = Product
+    template_name = 'products/shop.html'
+    context_object_name = 'products'
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'products/shop-detail.html'
+    context_object_name = 'product'

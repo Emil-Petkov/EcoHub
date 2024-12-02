@@ -4,6 +4,8 @@ from .validators import validate_bulgarian_phone, validate_username_length
 
 
 class CustomUser(AbstractUser):
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
     username = models.CharField(
         max_length=15,
         unique=True,
@@ -12,7 +14,7 @@ class CustomUser(AbstractUser):
             'unique': "A user with this username already exists.",
         }
     )
-    email = models.EmailField(unique=True, blank=False, null=False)
+    email = models.EmailField(unique=True)
     phone = models.CharField(
         max_length=15,
         blank=True,
