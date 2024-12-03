@@ -1,15 +1,22 @@
-from django.contrib import messages
-from django.contrib.auth.views import LoginView, LogoutView
-from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy, reverse
-from django.views.generic.base import TemplateView
-from django.views.generic.edit import UpdateView, FormView
-from .forms import (
-    UpdateProfilePictureForm, UpdateEmailForm,
-    UpdatePhoneForm, UpdateAddressForm, UpdateAboutForm, CustomUserCreationForm
-)
-from .utils import get_google_maps_url
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
+from django.contrib.auth.views import LogoutView, LoginView
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.urls import reverse, reverse_lazy
+from django.views import View
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView, UpdateView, FormView
+
+from .forms import UpdateProfilePictureForm, UpdateEmailForm, UpdatePhoneForm, UpdateAddressForm, UpdateAboutForm, \
+    CustomUserCreationForm
+from django.contrib import messages
+
+from .utils import get_google_maps_url
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class ManageProductsView(TemplateView):
@@ -52,7 +59,6 @@ class ProfileUpdateView(UpdateView):
     def get_template_names(self):
         field_template_mapping = {
             'profile_picture': 'accounts/update_profile_picture.html',
-            'email': 'accounts/update_email.html',
             'phone': 'accounts/update_phone.html',
             'address': 'accounts/update_address.html',
             'about': 'accounts/update_about.html',
@@ -82,8 +88,20 @@ class MyProductsView(TemplateView):
     template_name = 'accounts/my-products.html'
 
 
-class MyProfileView(TemplateView):
-    template_name = 'accounts/my-profile.html'
+@method_decorator(login_required, name='dispatch')
+class MyProfileView(View):
+    def get(self, request):
+        form = UpdateProfileForm(instance=request.user)
+        return render(request, 'accounts/my-profile.html', {'form': form})
+
+    def post(self, request):
+        form = UpdateProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+        else:
+            messages.error(request, "Failed to update profile. Please check the errors.")
+        return redirect('my_profile')
 
 
 class RegisterView(FormView):
@@ -99,3 +117,54 @@ class RegisterView(FormView):
     def form_invalid(self, form):
         messages.error(self.request, "Please correct the errors below.")
         return self.render_to_response(self.get_context_data(form=form))
+
+
+class ResetPasswordView(View):
+    def get(self, request):
+        return render(request, 'accounts/password_reset.html')
+
+    def post(self, request):
+        username = request.POST.get('username')
+        try:
+            user = User.objects.get(username=username)
+            request.session['reset_user_id'] = user.id
+            return redirect('password_reset_confirm')
+        except User.DoesNotExist:
+            messages.error(request, 'Username not found.')
+            return redirect('password_reset')
+
+
+class SetNewPasswordView(View):
+    def get(self, request):
+        if 'reset_user_id' not in request.session:
+            return redirect('password_reset')
+        return render(request, 'accounts/password_reset_confirm.html')
+
+    def post(self, request):
+        user_id = request.session.get('reset_user_id')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        from django.core.exceptions import ValidationError
+        from django.contrib.auth.password_validation import validate_password
+
+        try:
+            validate_password(new_password)
+        except ValidationError as e:
+            messages.error(request, ' '.join(e.messages))
+            return redirect('password_reset_confirm')
+
+        if new_password != confirm_password:
+            messages.error(request, 'Passwords do not match.')
+            return redirect('password_reset_confirm')
+
+        try:
+            user = User.objects.get(id=user_id)
+            user.password = make_password(new_password)
+            user.save()
+            del request.session['reset_user_id']
+            messages.success(request, 'Password reset successfully. You can now log in.')
+            return redirect('login')
+        except User.DoesNotExist:
+            messages.error(request, 'An error occurred.')
+            return redirect('password_reset')

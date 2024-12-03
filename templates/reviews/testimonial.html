@@ -1,0 +1,96 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="container py-5">
+        <h2 class="text-center mb-4">Write a Review</h2>
+        <form method="post" enctype="multipart/form-data" class="mb-4">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_first_name">First name: <span class="text-danger">*</span></label>
+                <input type="text" name="first_name" id="id_first_name" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_last_name">Last name: <span class="text-danger">*</span></label>
+                <input type="text" name="last_name" id="id_last_name" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_comment">Comment: <span class="text-danger">*</span></label>
+                <textarea name="comment" id="id_comment" class="form-control" required></textarea>
+            </div>
+
+            <div class="satisfaction-container mb-3">
+                <p>Rate your satisfaction: <span class="text-danger">*</span></p>
+                <div class="btn-group" role="group" aria-label="Satisfaction">
+                    {% for i in "12345" %}
+                        <input type="radio" name="satisfaction" value="{{ i }}" id="satisfaction-{{ i }}"
+                               class="btn-check"
+                               {% if form.satisfaction.value == i|stringformat:"s" %}checked{% endif %} required>
+                        <label class="btn btn-outline-success" for="satisfaction-{{ i }}">{{ i }}</label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-3">Submit</button>
+        </form>
+    </div>
+
+    <div class="container-fluid testimonial py-5">
+        <div class="container py-5">
+            <div class="testimonial-header text-center">
+                <h4 class="text-primary">Our Testimonial</h4>
+                <h1 class="display-5 mb-5 text-dark">Our Clients' Reviews</h1>
+            </div>
+            <div class="owl-carousel testimonial-carousel">
+                {% for review in reviews %}
+                    <div class="testimonial-item img-border-radius bg-light rounded p-4">
+                        <div class="position-relative">
+                            <i class="fa fa-quote-right fa-2x text-secondary position-absolute"
+                               style="bottom: 30px; right: 0;"></i>
+                            <div class="mb-4 pb-4 border-bottom border-secondary">
+                                <p class="mb-0">{{ review.comment }}</p>
+                            </div>
+                            <div class="d-flex align-items-center flex-nowrap">
+                                <div class="bg-secondary rounded">
+                                    <img src="
+                                            
+                                            
+                                            {% if review.user and review.user.profile.image %}{{ review.user.profile.image.url }}{% else %}{% static 'img/default-avatar.jpg' %}{% endif %}"
+                                         class="img-fluid rounded"
+                                         style="width: 100px; height: 100px;" alt="Client Avatar">
+                                </div>
+                                <div class="ms-4 d-block">
+                                    <h4 class="text-dark">{{ review.first_name }} {{ review.last_name }}</h4>
+                                    <p>Satisfaction: {{ review.satisfaction }}/5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-muted">No reviews yet. Be the first to leave a review!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $(".testimonial-carousel").owlCarousel({
+                loop: true,
+                margin: 10,
+                nav: true,
+                autoplay: true,
+                autoplayTimeout: 3000,
+                responsive: {
+                    0: {items: 1},
+                    600: {items: 2},
+                    1000: {items: 3}
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

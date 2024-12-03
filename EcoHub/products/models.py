@@ -7,6 +7,8 @@ class Product(models.Model):
     PRICE_UNIT_CHOICES = [
         ('kg', 'Per Kilogram'),
         ('item', 'Per Item'),
+        ('liter', 'Per Liter'),
+        ('jar', 'Per Jar'),
     ]
 
     name = models.CharField(max_length=100)

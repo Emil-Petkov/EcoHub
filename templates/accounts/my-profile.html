@@ -4,28 +4,11 @@
 {% block content %}
     <div class="container py-5">
         <h1 class="text-center mb-4">My Profile</h1>
-        <form method="POST" enctype="multipart/form-data" class="mb-4">
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    <label for="id_profile_picture" class="form-label">Profile Picture</label>
-                    {% if user.profile_picture %}
-                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded my-3">
-                    {% else %}
-                        <div class="placeholder-img mb-3">No Picture</div>
-                    {% endif %}
-                    {{ form.profile_picture }}
-                </div>
-
-                <div class="col-md-8">
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-success mt-3">Save Changes</button>
-                </div>
-            </div>
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Save</button>
         </form>
 
-        <div class="text-center">
-            <a href="{% url 'add_product' %}" class="btn btn-warning btn-lg">Add Product</a>
-        </div>
     </div>
 {% endblock %}
