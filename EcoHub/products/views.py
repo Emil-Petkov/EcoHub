@@ -3,8 +3,26 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView
-from .models import Product
 from .forms import ProductForm
+
+
+from django.shortcuts import render
+from .models import Product
+
+def shop_view(request):
+    sort_by = request.GET.get('sort', 'default')
+    products = Product.objects.all()
+
+    if sort_by == 'price_asc':
+        products = products.order_by('price')
+    elif sort_by == 'price_desc':
+        products = products.order_by('-price')
+
+    return render(request, 'products/shop.html', {
+        'products': products,
+        'sort_by': sort_by,
+    })
+
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
@@ -23,9 +41,9 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 
 
 def get_categories():
-    all_categories = ['bee honey', 'milk', 'fruits', 'vegetables', 'meat']
+    all_categories = {'bee honey', 'milk', 'fruits', 'vegetables', 'meat'}
     categories_in_use = Product.objects.values_list('category', flat=True).distinct()
-    return sorted(set(all_categories + [category.lower() for category in categories_in_use]))
+    return sorted(all_categories.union(set(category.lower() for category in categories_in_use)))
 
 
 class ProductListView(ListView):
@@ -35,26 +53,25 @@ class ProductListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        selected_category = self.request.GET.get('category', 'all').lower()
+        selected_categories = self.request.GET.getlist('categories')
         min_price = float(self.request.GET.get('min_price', 0.01))
         max_price = float(self.request.GET.get('max_price', 999))
 
         queryset = queryset.filter(price__gte=min_price, price__lte=max_price)
-        if selected_category != 'all':
-            queryset = queryset.filter(category__iexact=selected_category)
+        if selected_categories:
+            queryset = queryset.filter(category__in=selected_categories)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = get_categories()
-        context['selected_category'] = self.request.GET.get('category', 'all').lower()
+        context['selected_categories'] = self.request.GET.getlist('categories')
         context['min_price'] = self.request.GET.get('min_price', 0.01)
         context['max_price'] = self.request.GET.get('max_price', 999)
+        context['sort_by'] = self.request.GET.get('sort', 'default')
         context['empty_message'] = None
         if not context['products']:
-            selected_category = context['selected_category']
-            if selected_category != 'all':
-                context['empty_message'] = f"The category '{selected_category}' is empty."
+            context['empty_message'] = "No products match your filters."
         return context
 
 

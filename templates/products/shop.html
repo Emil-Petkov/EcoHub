@@ -2,77 +2,87 @@
 {% load static %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <!-- Sidebar Filter -->
-        <div class="col-md-3">
-            <div class="filter-container bg-light p-3 rounded">
-                <form method="get">
-                    <h5 class="mb-3">Filter by</h5>
-                    <!-- Category Filter -->
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Category</label>
-                        <select name="category" id="category" class="form-select">
-                            <option value="all" {% if selected_category == "all" %}selected{% endif %}>All Products</option>
-                            {% for category in categories %}
-                                <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>
-                                    {{ category.capitalize }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
+    <div class="container py-5">
+        <div class="row">
+            <!-- Sidebar Filter -->
+            <div class="col-md-3">
+                <div class="filter-container bg-light p-3 rounded">
+                    <form method="get">
+                        <h5 class="mb-3">Filter by</h5>
+                        <!-- Category Filter -->
 
-                    <!-- Price Range Filter -->
-                    <div class="mb-3">
-                        <label for="price-range" class="form-label">Price Range (€)</label>
-                        <input type="number" name="min_price" class="form-control mb-2" placeholder="Min Price"
-                               value="{{ min_price }}" min="0.01" step="0.01">
-                        <input type="number" name="max_price" class="form-control" placeholder="Max Price"
-                               value="{{ max_price }}" max="999" step="0.01">
-                    </div>
 
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
-                </form>
+                        <div class="mb-3">
+                            <p>Category:</p>
+                            <ul class="category-list">
+                                {% for category in categories %}
+                                    <li class="category-item">
+                                        <label>
+                                            <input type="checkbox" name="categories" value="{{ category }}"
+                                                   {% if category in selected_categories %}checked{% endif %}>
+                                            {{ category }}
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                       
+                        <!-- Price Range Filter -->
+                        <label for="price-slider">Price Range (€):</label>
+                        <input type="range" id="price-slider" name="min_price" min="1" max="999"
+                               value="{{ min_price|default:1 }}"
+                               oninput="this.nextElementSibling.innerText=this.value">
+                        <span>{{ min_price|default:1 }}</span>
+                        <input type="range" id="price-slider-max" name="max_price" min="1" max="999"
+                               value="{{ max_price|default:999 }}"
+                               oninput="this.nextElementSibling.innerText=this.value">
+                        <span>{{ max_price|default:999 }}</span>
+
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <!-- Product Grid -->
-        <div class="col-md-9">
-            <h1 class="mb-4 text-center">Our Products</h1>
+            <!-- Product Grid -->
+            <div class="col-md-9">
+                <h1 class="mb-4 text-center">Our Products</h1>
 
-            <!-- Empty Category Message -->
-            {% if empty_message %}
-                <div class="alert alert-warning text-center">{{ empty_message }}</div>
-            {% endif %}
+                <!-- Empty Category Message -->
+                {% if empty_message %}
+                    <div class="alert alert-warning text-center">{{ empty_message }}</div>
+                {% endif %}
 
-            <!-- Products -->
-            <div class="row g-4">
-                {% for product in products %}
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 shadow-sm">
-                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ product.name }}</h5>
-                                <p class="card-text">{{ product.description|truncatechars:100 }}</p>
-                                <p class="card-text"><strong>€{{ product.price }} / {{ product.unit }}</strong></p>
-                            </div>
-                            <div class="card-footer bg-transparent border-top-0">
-                                <div class="d-flex gap-2">
-                                    <a href="{% url 'shop_detail' product.id %}" class="btn btn-primary flex-grow-1">
-                                        View Details
-                                    </a>
-                                    <a href="#" class="btn btn-success flex-grow-1">Add to Cart</a>
+                <!-- Products -->
+                <div class="row g-4">
+                    {% for product in products %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 shadow-sm">
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+                                    <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+                                    <p class="card-text"><strong>€{{ product.price }} / {{ product.unit }}</strong></p>
+                                </div>
+                                <div class="card-footer bg-transparent border-top-0">
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'shop_detail' product.id %}"
+                                           class="btn btn-primary flex-grow-1">
+                                            View Details
+                                        </a>
+                                        <a href="#" class="btn btn-success flex-grow-1">Add to Cart</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
-            </div>
+                    {% endfor %}
+                </div>
 
-            <!-- No Products Message -->
-            
+                <!-- No Products Message -->
+
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
