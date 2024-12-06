@@ -597,6 +597,12 @@ button[type="submit"] {
     padding: 10px 15px;
 }
 
+.input-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /*** Footer Start ***/
 .footer .footer-item .btn-link {
     line-height: 35px;

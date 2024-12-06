@@ -17,6 +17,7 @@
                                 
                                 
                                 
+                                
                                 {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'img/default-profile.png' %}{% endif %}"
                              alt="Profile Picture"
                              class="img-thumbnail mb-2"
@@ -33,7 +34,6 @@
                     <p>
                         <strong>Email:</strong> {{ user.email }}
                         <button class="btn btn-warning btn-sm" onclick="toggleEdit('email')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteField('email')">Delete</button>
                     </p>
                     <form id="email-form" method="POST" action="{% url 'update_email' %}" class="d-none">
                         {% csrf_token %}
@@ -47,7 +47,6 @@
                     <p>
                         <strong>Phone:</strong> {{ user.phone }}
                         <button class="btn btn-warning btn-sm" onclick="toggleEdit('phone')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteField('phone')">Delete</button>
                     </p>
                     <form id="phone-form" method="POST" action="{% url 'update_phone' %}" class="d-none">
                         {% csrf_token %}
@@ -67,6 +66,19 @@
                         <textarea name="address" class="form-control mb-2" required>{{ user.address }}</textarea>
                         <button type="submit" class="btn btn-success btn-sm">Save</button>
                     </form>
+
+                    <!-- About -->
+                    <div class="mb-3">
+                        <p>
+                            <strong>About:</strong> {{ user.about }}
+                            <button class="btn btn-warning btn-sm" onclick="toggleEdit('about')">Edit</button>
+                        </p>
+                        <form id="about-form" method="POST" action="{% url 'update_about' %}" class="d-none">
+                            {% csrf_token %}
+                            <textarea name="about" class="form-control mb-2">{{ user.about }}</textarea>
+                            <button type="submit" class="btn btn-success btn-sm">Save</button>
+                        </form>
+                    </div>
 
                     <div class="text-end mb-3">
                         <a href="{% url 'add_product' %}" class="btn btn-warning btn-lg">Add Product</a>
@@ -90,18 +102,6 @@
                     </div>
                 </div>
 
-                <!-- About -->
-                <div class="mb-3">
-                    <p>
-                        <strong>About:</strong> {{ user.about }}
-                        <button class="btn btn-warning btn-sm" onclick="toggleEdit('about')">Edit</button>
-                    </p>
-                    <form id="about-form" method="POST" action="{% url 'update_about' %}" class="d-none">
-                        {% csrf_token %}
-                        <textarea name="about" class="form-control mb-2">{{ user.about }}</textarea>
-                        <button type="submit" class="btn btn-success btn-sm">Save</button>
-                    </form>
-                </div>
 
                 <!-- Logout -->
                 <div class="mt-4 text-end">
