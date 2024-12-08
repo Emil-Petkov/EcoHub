@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from EcoHub.products.models import Product
+from django.utils.timezone import now
+
 
 
 class Cart(models.Model):
@@ -10,6 +12,10 @@ class Cart(models.Model):
     )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name}"

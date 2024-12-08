@@ -7,6 +7,7 @@ from EcoHub.products.models import Product
 from .models import Cart
 from django.http import HttpResponse
 from .forms import CheckoutForm
+import json
 
 
 
@@ -25,6 +26,7 @@ class CartView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user)
 
+
 @login_required(login_url='/accounts/login/')
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -42,37 +44,39 @@ def delete_cart_item(request, product_id):
     return redirect('my_bag')
 
 
-@login_required
 def update_cart(request, product_id):
-    if request.method == "POST":
-        action = request.POST.get('action')
-        cart_item = Cart.objects.filter(user=request.user, product_id=product_id).first()
+    if request.method == 'POST':
+        try:
+            cart_item = Cart.objects.get(product_id=product_id, user=request.user)
 
-        if not cart_item:
-            return JsonResponse({'error': 'Cart item not found'}, status=404)
+            data = json.loads(request.body)
+            action = data.get('action')
 
-        if action == 'increase':
-            cart_item.quantity += 1
-        elif action == 'decrease' and cart_item.quantity > 1:
-            cart_item.quantity -= 1
+            if action == 'increase':
+                cart_item.quantity += 1
+            elif action == 'decrease' and cart_item.quantity > 1:
+                cart_item.quantity -= 1
 
-        cart_item.save()
+            cart_item.save()
 
-        cart_items = Cart.objects.filter(user=request.user)
-        subtotal = sum(item.product.price * item.quantity for item in cart_items)
-        shipping = 0 if subtotal >= 30 else 5
-        total = subtotal + shipping
+            cart_items = Cart.objects.filter(user=request.user)
+            subtotal = sum(item.product.price * item.quantity for item in cart_items)
+            shipping = 0 if subtotal >= 30 else 5.00
+            total = subtotal + shipping
 
-        return JsonResponse({
-            'quantity': cart_item.quantity,
-            'total_price': round(cart_item.product.price * cart_item.quantity, 2),
-            'subtotal': round(subtotal, 2),
-            'shipping': 'Free shipping' if shipping == 0 else '5.00 €',
-            'total': round(total, 2),
-        })
+            return JsonResponse({
+                'quantity': cart_item.quantity,
+                'total_price': cart_item.product.price * cart_item.quantity,
+                'subtotal': subtotal,
+                'shipping': "Free shipping" if subtotal >= 30 else shipping,
+                'total': total,
+            })
+        except Cart.DoesNotExist:
+            return JsonResponse({'error': 'Item not found in cart'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
 
 
 @login_required(login_url='/accounts/login/')
