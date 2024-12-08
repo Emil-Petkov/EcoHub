@@ -18,6 +18,8 @@
                                 
                                 
                                 
+                                
+                                
                                 {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'img/default-profile.png' %}{% endif %}"
                              alt="Profile Picture"
                              class="img-thumbnail mb-2"
@@ -101,6 +103,45 @@
 
                     </div>
                 </div>
+                <h3>Manage Products</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td><img src="{{ product.image.url }}" alt="{{ product.name }}" width="100"></td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>{{ product.price }}</td>
+            <td>
+                <form method="post" action="{% url 'delete_product' product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+                </table>
 
 
                 <!-- Logout -->

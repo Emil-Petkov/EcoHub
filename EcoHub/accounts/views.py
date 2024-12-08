@@ -16,6 +16,8 @@ from django.contrib import messages
 from .utils import get_google_maps_url
 from django.contrib.auth import get_user_model
 
+from ..products.models import Product
+
 User = get_user_model()
 
 
@@ -31,6 +33,7 @@ class ManageProductsView(TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['user'] = user
+        context['products'] = Product.objects.filter(user=user)
         context['google_maps_url'] = get_google_maps_url(
             getattr(user, 'address', "Default Location")
         )
@@ -168,3 +171,23 @@ class SetNewPasswordView(View):
         except User.DoesNotExist:
             messages.error(request, 'An error occurred.')
             return redirect('password_reset')
+
+class DeleteProductView(View):
+    def post(self, request, product_id):
+        try:
+            product = Product.objects.get(id=product_id, user=request.user)
+            product.delete()
+            messages.success(request, 'Product deleted successfully.')
+        except Product.DoesNotExist:
+            messages.error(request, 'Product not found or you do not have permission to delete this product.')
+        return redirect('manage_products')
+
+
+class MyProductsView(TemplateView):
+    template_name = 'accounts/my-products.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['products'] = Product.objects.filter(user=user)
+        return context

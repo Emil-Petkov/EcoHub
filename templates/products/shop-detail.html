@@ -13,9 +13,8 @@
             <div class="col-lg-6">
                 <h1 class="mb-4">{{ product.name }}</h1>
                 <p><strong>Category:</strong> {{ product.category }}</p>
-                <p>
-                    <strong>Price:</strong> €{{ product.price }} / {{ price_unit_display }}
-                </p>
+                <p>Price: €{{ product.price }} / {{ product.get_unit_display }}</p>
+
                 <p>{{ product.description }}</p>
             </div>
         </div>

@@ -20,7 +20,7 @@ class Product(models.Model):
         default='kg'
     )
     category = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='product_images/')
+    image = models.ImageField(upload_to='product_images/', blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
