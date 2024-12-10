@@ -40,6 +40,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
 
+
 def get_categories():
     all_categories = {'bee honey', 'milk', 'fruits', 'vegetables', 'meat'}
     categories_in_use = Product.objects.values_list('category', flat=True).distinct()
@@ -61,6 +62,8 @@ class ProductListView(ListView):
         if selected_categories:
             queryset = queryset.filter(category__in=selected_categories)
         return queryset
+
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

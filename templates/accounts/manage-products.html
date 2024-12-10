@@ -10,21 +10,18 @@
             </div>
             <div class="card-body">
                 <!-- Profile Picture -->
-                <div class="mb-3 text-center">
-                    <form method="POST" action="{% url 'update_profile_picture' %}" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <img src="
-                                
-                                {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'img/default-profile.png' %}{% endif %}"
-                             alt="Profile Picture"
-                             class="img-thumbnail mb-2"
-                             style="width: 150px; height: 150px; object-fit: cover;">
-                        <div>
-                            <input type="file" name="profile_picture" class="form-control mb-2" accept="image/*">
-                            <button type="submit" class="btn btn-primary btn-sm">Upload New Picture</button>
-                        </div>
-                    </form>
-                </div>
+{#                <div class="mb-3 text-center">#}
+{#                    <form method="POST" action="{% url 'update_profile_picture' %}" enctype="multipart/form-data">#}
+{#                        {% csrf_token %}#}
+{#                        <img src="#}
+{#                                {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{{ MEDIA_URL }}users/profile_pictures/default-profile.jpg{% endif %}"#}
+{#                             alt="Profile Picture">#}
+{##}
+{#                        <input type="file" name="profile_picture" class="form-control mb-2">#}
+{#                        <button type="submit" class="btn btn-primary">Upload New Picture</button>#}
+{#                    </form>#}
+{##}
+{#                </div>#}
 
                 <!-- Email -->
                 <div class="mb-3">
@@ -67,7 +64,7 @@
                     <!-- About -->
                     <div class="mb-3">
                         <p>
-                            <strong>About:</strong> {{ user.about }}
+                            <strong>About me:</strong> {{ user.about }}
                             <button class="btn btn-warning btn-sm" onclick="toggleEdit('about')">Edit</button>
                         </p>
                         <form id="about-form" method="POST" action="{% url 'update_about' %}" class="d-none">
@@ -134,18 +131,17 @@
                             </tr>
                         {% endfor %}
                         </tbody>
+
                     </table>
 
-                </table>
 
-
-                <!-- Logout -->
-                <div class="mt-4 text-end">
-                    <form method="POST" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
-                    </form>
-                </div>
+                    <!-- Logout -->
+                    <div class="mt-4 text-end">
+                        <form method="POST" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+                        </form>
+                    </div>
             </div>
         </div>
     </div>

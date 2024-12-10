@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView, LoginView
@@ -17,6 +18,7 @@ from .utils import get_google_maps_url
 from django.contrib.auth import get_user_model
 
 from ..products.models import Product
+import logging
 
 User = get_user_model()
 
@@ -60,17 +62,11 @@ class ProfileUpdateView(UpdateView):
         return self.request.user
 
     def get_template_names(self):
-        field_template_mapping = {
-            'profile_picture': 'accounts/update_profile_picture.html',
-            'phone': 'accounts/update_phone.html',
-            'address': 'accounts/update_address.html',
-            'about': 'accounts/update_about.html',
-        }
-        return [field_template_mapping.get(self.kwargs['field'])]
+        return ['accounts/update_profile.html']
 
     def get_form_class(self):
         form_mapping = {
-            'profile_picture': UpdateProfilePictureForm,
+            # 'profile_picture': UpdateProfilePictureForm,
             'email': UpdateEmailForm,
             'phone': UpdatePhoneForm,
             'address': UpdateAddressForm,
@@ -172,6 +168,7 @@ class SetNewPasswordView(View):
             messages.error(request, 'An error occurred.')
             return redirect('password_reset')
 
+
 class DeleteProductView(View):
     def post(self, request, product_id):
         try:
@@ -189,5 +186,27 @@ class MyProductsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        context['user'] = user
+        context['MEDIA_URL'] = settings.MEDIA_URL
         context['products'] = Product.objects.filter(user=user)
+        context['google_maps_url'] = get_google_maps_url(
+            getattr(user, 'address', "Default Location")
+        )
         return context
+
+
+logger = logging.getLogger(__name__)
+
+# @login_required
+# def update_profile_picture(request):
+#     if request.method == "POST":
+#         user = request.user
+#         if 'profile_picture' in request.FILES:
+#             logger.info(f"Uploading new profile picture for user: {user.username}")
+#             user.profile_picture = request.FILES['profile_picture']
+#         else:
+#             logger.warning(f"No file uploaded. Setting default profile picture for user: {user.username}")
+#             user.profile_picture = 'users/profile_pictures/default-profile.jpg'
+#         user.save()
+#         logger.info(f"Profile picture updated successfully for user: {user.username}")
+#         return redirect('profile')
