@@ -28,7 +28,7 @@ class ReviewsTests(TestCase):
 
     def test_create_review(self):
         response = self.client.post(reverse('testimonial'), self.review_data)
-        self.assertEqual(response.status_code, 302)  # Redirect after submission
+        self.assertEqual(response.status_code, 302)
         self.assertTrue(Review.objects.filter(comment='Great service!').exists())
 
     def test_filter_high_satisfaction_reviews(self):
