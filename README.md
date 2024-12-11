@@ -65,6 +65,9 @@ EcoHub is a Django-based e-commerce platform designed to provide users with a su
 ---
 
 ## **Important Notes**
+> **Summary**: The project requires you to set up your own database, generate a new SECRET_KEY, and optionally provide your own Google Maps API key if you wish to test the map functionality. During the local demonstration, I will use my own keys.
+
+## **Important Notes**
 - 📂 **Database**: The database is hosted in a Docker container. Create your own superuser to manage the application.
 - 🖼️ **Media Files**: Product images are stored in the `media/` directory locally. Ensure the directory is writable.
 - 🔗 **Footer Links**:
