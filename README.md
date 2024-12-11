@@ -68,7 +68,7 @@ EcoHub is a Django-based e-commerce platform designed to provide users with a su
 - 🔗 **Footer Links**:
   - A Facebook page (created as a simulated contact option).
   - A YouTube link to a short video, simulating a promotional ad for the products.
-- 🎨 **Interactive Footer**: The footer includes links with icons and minor animations for an enhanced user experience.
+
 
 ---
 
