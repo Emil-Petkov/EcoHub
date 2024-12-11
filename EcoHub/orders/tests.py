@@ -31,3 +31,4 @@ class OrdersTests(TestCase):
         response = self.client.get(reverse('my_bag'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Test Product')
+
