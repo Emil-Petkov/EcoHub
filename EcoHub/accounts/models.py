@@ -22,12 +22,6 @@ class CustomUser(AbstractUser):
         validators=[validate_bulgarian_phone]
     )
     address = models.TextField(blank=True, null=True)
-    # profile_picture = models.ImageField(
-    #     upload_to='users/profile_pictures/',
-    #     blank=True,
-    #     null=True,
-    #     default='users/profile_pictures/default-profile.jpg'
-    # )
     about = models.TextField(blank=True, null=True)
 
     USERNAME_FIELD = 'username'

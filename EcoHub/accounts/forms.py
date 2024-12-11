@@ -6,13 +6,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class UpdateProfilePictureForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['profile_picture']
-
-    profile_picture = forms.ImageField(required=False)
-
 
 class UpdateEmailForm(forms.ModelForm):
     class Meta:

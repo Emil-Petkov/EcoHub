@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, UpdateView, FormView
 
-from .forms import UpdateProfilePictureForm, UpdateEmailForm, UpdatePhoneForm, UpdateAddressForm, UpdateAboutForm, \
+from .forms import UpdateEmailForm, UpdatePhoneForm, UpdateAddressForm, UpdateAboutForm, \
     CustomUserCreationForm
 from django.contrib import messages
 
@@ -66,7 +66,6 @@ class ProfileUpdateView(UpdateView):
 
     def get_form_class(self):
         form_mapping = {
-            # 'profile_picture': UpdateProfilePictureForm,
             'email': UpdateEmailForm,
             'phone': UpdatePhoneForm,
             'address': UpdateAddressForm,
@@ -94,7 +93,7 @@ class MyProfileView(View):
         return render(request, 'accounts/my-profile.html', {'form': form})
 
     def post(self, request):
-        form = UpdateProfileForm(request.POST, request.FILES, instance=request.user)
+        form = UpdateProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
@@ -196,17 +195,3 @@ class MyProductsView(TemplateView):
 
 
 logger = logging.getLogger(__name__)
-
-# @login_required
-# def update_profile_picture(request):
-#     if request.method == "POST":
-#         user = request.user
-#         if 'profile_picture' in request.FILES:
-#             logger.info(f"Uploading new profile picture for user: {user.username}")
-#             user.profile_picture = request.FILES['profile_picture']
-#         else:
-#             logger.warning(f"No file uploaded. Setting default profile picture for user: {user.username}")
-#             user.profile_picture = 'users/profile_pictures/default-profile.jpg'
-#         user.save()
-#         logger.info(f"Profile picture updated successfully for user: {user.username}")
-#         return redirect('profile')

@@ -14,8 +14,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('index')), name='logout'),
 
     path('my-profile/', MyProfileView.as_view(), name='my_profile'),
-    path('update-profile-picture/', ProfileUpdateView.as_view(), {'field': 'profile_picture'},
-         name='update_profile_picture'),
+
     path('update-email/', ProfileUpdateView.as_view(), {'field': 'email'}, name='update_email'),
     path('update-phone/', ProfileUpdateView.as_view(), {'field': 'phone'}, name='update_phone'),
     path('update-address/', ProfileUpdateView.as_view(), {'field': 'address'}, name='update_address'),
