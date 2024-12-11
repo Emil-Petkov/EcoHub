@@ -23,25 +23,25 @@ class AccountsTests(TestCase):
             username='existinguser',
             email='existinguser@example.com',
             password='Testpassword123',
-            is_active=True  # Уверяваме се, че потребителят е активен
+            is_active=True
         )
 
     def test_user_registration(self):
         response = self.client.post(reverse('register'), self.user_data)
-        self.assertEqual(response.status_code, 302)  # Redirect after registration
+        self.assertEqual(response.status_code, 302)
         self.assertTrue(User.objects.filter(username='testuser').exists())
 
     def test_user_login(self):
         User.objects.create_user(username='testuser', password='Testpassword123')
         response = self.client.post(reverse('login'), self.login_data)
-        self.assertEqual(response.status_code, 302)  # Redirect after login
-        self.assertTrue('_auth_user_id' in self.client.session)  # User is logged in
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue('_auth_user_id' in self.client.session)
 
     def test_user_logout(self):
         self.client.login(username='existinguser', password='Testpassword123')
-        response = self.client.post(reverse('logout'))  # Използваме POST вместо GET
-        self.assertEqual(response.status_code, 302)  # Redirect after logout
-        self.assertFalse('_auth_user_id' in self.client.session)  # User is logged out
+        response = self.client.post(reverse('logout'))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse('_auth_user_id' in self.client.session)
 
     def test_profile_update(self):
         self.client.login(username='existinguser', password='Testpassword123')
@@ -52,6 +52,6 @@ class AccountsTests(TestCase):
             'about': 'Updated about section.'
         }
         response = self.client.post(reverse('update_email'), {'email': update_data['email']})
-        self.assertEqual(response.status_code, 302)  # Redirect after update
+        self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, 'updatedemail@example.com')
